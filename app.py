@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect
 from models.game import add_move, get_big_detailed_board, reset_game, get_current_player
+from flask_sock import Sock
  
 app = Flask(__name__)
+
+sock = Sock(app)
  
 @app.route('/')
 def game():
