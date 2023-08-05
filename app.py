@@ -1,10 +1,22 @@
 from flask import Flask, render_template, request, redirect
 from models.game import add_move, get_big_detailed_board, reset_game, get_current_player
 from flask_sock import Sock
+from simple_websocket.ws import Server as WS
  
 app = Flask(__name__)
 
 sock = Sock(app)
+
+
+@sock.route('/echo')
+def echo(ws: WS):
+    while True:
+        data = ws.receive()
+        ws.send(data)
+
+@app.route('/becho')
+def becho():
+    return render_template('becho.html')
  
 @app.route('/')
 def game():
