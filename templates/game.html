@@ -1,0 +1,107 @@
+{% macro move_form(big_row_index, big_col_index, small_row_index, small_col_index) -%}
+  <form action="/moves" method="POST">
+    <input type="hidden" name="big_row_index" value="{{ big_row_index }}" />
+    <input type="hidden" name="big_col_index" value="{{ big_col_index }}" />
+    <input type="hidden" name="small_row_index" value="{{ small_row_index }}" />
+    <input type="hidden" name="small_col_index" value="{{ small_col_index }}" />
+    <button type="submit">Go</button>
+
+  </form>
+{%- endmacro %}
+
+
+<html>
+  <head>
+    <script src="/static/webworker.js"></script>
+    <style>
+      *{
+        box-sizing: border-box;
+      }
+
+      table.big-table, table.small-table {
+        border-style: hidden;
+        border-collapse: collapse;
+      }
+
+      table.big-table td {
+        border: 2px solid;
+        /* width: 150px;
+        height: 150px; */
+        padding: 15px;
+        position: relative;
+      }
+
+      div.small-board-winner {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        font-size: 170px;
+        
+        text-align: center;
+      }
+
+      table.small-table td {
+        border: 1px solid grey;
+        width: 50px;
+        height: 50px;
+        padding: 5px;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      table.small-table td form {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+
+    </style>
+  </head>
+  <body>
+    <h1>Your Move: {{ current_player }}</h1>
+    <form action="/reset" method="POST">
+    <button type="submit">Reset Game</button>
+    {%if board['big_winner'] %}
+    <h2>Winner: {{ board['big_winner'] }}</h2>
+    {%endif %}
+    </form>
+    <table class="big-table">
+      {%for big_row in board['board'] %}
+      {% set big_row_loop = loop %}
+      <tr class="big-tr">
+        {%for big_square in big_row %}
+        {% set big_col_loop = loop %}
+        {% set small_board = big_square['small_board'] %}
+        <td class="big-td">
+          {% set small_board_winner = big_square['winner'] %}
+          {% if small_board_winner %}
+          <div class="small-board-winner">
+            {{ small_board_winner }}
+          </div>
+          {% endif %}
+          <table class="small-table">
+            {%for small_row in small_board %}
+            {% set small_row_loop = loop %}
+            <tr class="small-tr">
+              {%for val in small_row %}
+
+              {% set small_col_loop = loop %}
+              <td class="small-td">
+                {%if val['player'] %}
+                {{ val['player'] }}
+                {%elif val['move_is_legal'] %}
+                {{ move_form(big_row_loop.index0, big_col_loop.index0, small_row_loop.index0, small_col_loop.index0) }}
+                {%endif%}
+              </td>
+              {%endfor%}
+            </tr>      
+          {%endfor%}
+          </table>
+        
+        </td>
+      {%endfor%}
+      </tr>      
+    {%endfor%}
+    </table>
+  </body>
+</html>
