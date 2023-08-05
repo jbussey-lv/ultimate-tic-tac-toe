@@ -22,10 +22,18 @@
       });
       document.getElementById('form').onsubmit = ev => {
         ev.preventDefault();
-        const textField = document.getElementById('text');
-        log('>>> ' + textField.value, 'red');
-        socket.send(textField.value);
+        const textField = document.getElementById('text')
+        const val = textField.value;
+        log('>>> ' + val, 'red');
         textField.value = '';
+
+        let formData = new FormData();
+        formData.append('message', val);
+
+        fetch('/message', {
+          method: 'POST',
+          body: formData
+        })
       };
     </script>
   </body>
