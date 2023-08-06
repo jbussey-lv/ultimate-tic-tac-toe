@@ -5,34 +5,26 @@ from simple_websocket.ws import Server as WS
 import time
  
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app)
 
 game = Game()
 
-@socketio.on('my event', namespace='/echo')
-def my_event(message):
-    emit('my response', {'data': 'got it!'})
+@socketio.on('message')
+def handle_message(data):
+    print('received message: ' + data)
 
-def echo(ws: WS):
-    global message
-    old_message = message
-    while True:
-        new_message = message
-        if new_message != old_message:
-            old_message = new_message
-            ws.send(new_message)
-
+@socketio.on('my event')
+def handle_my_custom_event(json):
+    print('received json: ' + str(json))
+    
 @app.route('/becho')
 def becho():
     response = render_template('becho.html')
     return response
 
-@app.route('/message', methods=['POST'])
-def message_in():
-    global message
-    message = request.form.get('message')
-    return ""
+
  
 @app.route('/')
 def home():
@@ -56,7 +48,4 @@ def reset():
  
 # main driver function
 if __name__ == '__main__':
- 
-    # run() method of Flask class runs the application
-    # on the local development server.
     socketio.run(app)

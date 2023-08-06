@@ -11,31 +11,12 @@
       <label for="text">Input: </label>
       <input type="text" id="text" autofocus>
     </form>
-    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
-    <script>
-      // const log = (text, color) => {
-      //   document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;
-      // };
-
-      // const socket = new WebSocket('ws://' + location.host + '/echo');
-      // socket.addEventListener('message', ev => {
-      //   log('<<< ' + ev.data, 'blue');
-      // });
-      // document.getElementById('form').onsubmit = ev => {
-      //   ev.preventDefault();
-      //   const textField = document.getElementById('text')
-      //   const val = textField.value;
-      //   log('>>> ' + val, 'red');
-      //   textField.value = '';
-
-      //   let formData = new FormData();
-      //   formData.append('message', val);
-
-      //   fetch('/message', {
-      //     method: 'POST',
-      //     body: formData
-      //   })
-      // };
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io();
+        socket.on('connect', function() {
+            socket.emit('my event', {data: 'I\'m connected!'});
+        });
     </script>
   </body>
 </html>
