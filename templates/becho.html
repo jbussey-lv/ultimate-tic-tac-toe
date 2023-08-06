@@ -11,30 +11,31 @@
       <label for="text">Input: </label>
       <input type="text" id="text" autofocus>
     </form>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
     <script>
-      const log = (text, color) => {
-        document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;
-      };
+      // const log = (text, color) => {
+      //   document.getElementById('log').innerHTML += `<span style="color: ${color}">${text}</span><br>`;
+      // };
 
-      const socket = new WebSocket('ws://' + location.host + '/echo');
-      socket.addEventListener('message', ev => {
-        log('<<< ' + ev.data, 'blue');
-      });
-      document.getElementById('form').onsubmit = ev => {
-        ev.preventDefault();
-        const textField = document.getElementById('text')
-        const val = textField.value;
-        log('>>> ' + val, 'red');
-        textField.value = '';
+      // const socket = new WebSocket('ws://' + location.host + '/echo');
+      // socket.addEventListener('message', ev => {
+      //   log('<<< ' + ev.data, 'blue');
+      // });
+      // document.getElementById('form').onsubmit = ev => {
+      //   ev.preventDefault();
+      //   const textField = document.getElementById('text')
+      //   const val = textField.value;
+      //   log('>>> ' + val, 'red');
+      //   textField.value = '';
 
-        let formData = new FormData();
-        formData.append('message', val);
+      //   let formData = new FormData();
+      //   formData.append('message', val);
 
-        fetch('/message', {
-          method: 'POST',
-          body: formData
-        })
-      };
+      //   fetch('/message', {
+      //     method: 'POST',
+      //     body: formData
+      //   })
+      // };
     </script>
   </body>
 </html>
