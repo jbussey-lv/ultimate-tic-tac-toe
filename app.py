@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from models.game import Game 
-from flask_socketio import SocketIO, emit, send
+from flask_socketio import SocketIO, emit, send, join_room
 from simple_websocket.ws import Server as WS
 import time
  
@@ -12,9 +12,12 @@ socketio = SocketIO(app)
 game = Game()
 
 @socketio.event
+def connect():
+    join_room('abc')
+
+@socketio.event
 def my_custom_event(arg1):
-    print('received args: ' + str(arg1))
-    send(arg1, broadcast=True)
+    send(arg1, room='abc')
 
 @app.route('/becho')
 def becho():
