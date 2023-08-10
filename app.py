@@ -11,13 +11,18 @@ socketio = SocketIO(app)
 
 game = Game()
 
+def get_room():
+    source_url = request.referrer
+    return source_url
+
 @socketio.event
 def connect():
-    join_room('abc')
+    join_room(get_room())
 
 @socketio.event
 def my_custom_event(arg1):
-    send(arg1, room='abc')
+    print(str(request.sid))
+    send(arg1, room=get_room())
 
 @app.route('/becho')
 def becho():
