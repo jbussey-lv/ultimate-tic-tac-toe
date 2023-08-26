@@ -24,10 +24,6 @@ def get_new_game_key():
 def get_game_link(game_key, player):
     return "/games/" + game_key + "/" + player
 
-def get_room():
-    source_url = request.referrer
-    return source_url
-
 def extract_game_key(referrer):
     sub1 = "games/"
     sub2 = "/"
@@ -41,12 +37,7 @@ def connect():
     game_key = extract_game_key(request.referrer)
     join_room(game_key)
 
-@socketio.event
-def my_custom_event(arg1):
-    print(str(request.sid))
-    send(arg1, room=get_room())
-
-@app.route('/home')
+@app.route('/')
 def home():
     return render_template('home.html')
 
@@ -101,13 +92,8 @@ def moves(game_key):
     game.add_move(big_row_index, big_col_index, small_row_index, small_col_index)
 
     socketio.emit('message', 'refresh', room=game_key)
-    
-    return redirect(request.referrer)
 
-@app.route('/becho')
-def becho():
-    response = render_template('becho.html')
-    return response
+    return redirect(request.referrer)
 
  
 # main driver function

@@ -4,7 +4,7 @@
     <input type="hidden" name="big_col_index" value="{{ big_col_index }}" />
     <input type="hidden" name="small_row_index" value="{{ small_row_index }}" />
     <input type="hidden" name="small_col_index" value="{{ small_col_index }}" />
-    <button type="submit" {% if disabled %}disabled{% endif %}>Go</button>
+    <button type="submit" style="pointer-events: auto;" {% if disabled %}disabled{% endif %}>Go</button>
   </form>
 {%- endmacro %}
 
