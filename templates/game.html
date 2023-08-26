@@ -1,10 +1,10 @@
-{% macro move_form(big_row_index, big_col_index, small_row_index, small_col_index) -%}
+{% macro move_form(big_row_index, big_col_index, small_row_index, small_col_index, disabled) -%}
   <form action="moves" method="POST">
     <input type="hidden" name="big_row_index" value="{{ big_row_index }}" />
     <input type="hidden" name="big_col_index" value="{{ big_col_index }}" />
     <input type="hidden" name="small_row_index" value="{{ small_row_index }}" />
     <input type="hidden" name="small_col_index" value="{{ small_col_index }}" />
-    <button type="submit">Go</button>
+    <button type="submit" {% if disabled %}disabled{% endif %}>Go</button>
   </form>
 {%- endmacro %}
 
@@ -88,8 +88,8 @@
               <td class="small-td">
                 {%if val['player'] %}
                 {{ val['player'] }}
-                {%elif this_player == current_player and val['move_is_legal'] %}
-                {{ move_form(big_row_loop.index0, big_col_loop.index0, small_row_loop.index0, small_col_loop.index0) }}
+                {%elif val['move_is_legal'] %}
+                {{ move_form(big_row_loop.index0, big_col_loop.index0, small_row_loop.index0, small_col_loop.index0, this_player != current_player) }}
                 {%endif%}
               </td>
               {%endfor%}
