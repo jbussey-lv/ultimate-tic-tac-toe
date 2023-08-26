@@ -8,7 +8,7 @@ class Game:
   def __init__(self):
     self.moves = []
 
-  def reset_game(self):
+  def reset(self):
     self.moves = []
 
   def add_move(self, big_row, big_col, small_row, small_col):

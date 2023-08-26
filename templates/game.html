@@ -1,18 +1,16 @@
 {% macro move_form(big_row_index, big_col_index, small_row_index, small_col_index) -%}
-  <form action="/moves" method="POST">
+  <form action="moves" method="POST">
     <input type="hidden" name="big_row_index" value="{{ big_row_index }}" />
     <input type="hidden" name="big_col_index" value="{{ big_col_index }}" />
     <input type="hidden" name="small_row_index" value="{{ small_row_index }}" />
     <input type="hidden" name="small_col_index" value="{{ small_col_index }}" />
     <button type="submit">Go</button>
-
   </form>
 {%- endmacro %}
 
 
 <html>
   <head>
-    <script src="/static/webworker.js"></script>
     <style>
       *{
         box-sizing: border-box;
@@ -58,8 +56,9 @@
     </style>
   </head>
   <body>
-    <h1>Your Move: {{ current_player }}</h1>
-    <form action="/reset" method="POST">
+    <h1>You: {{ this_player }} - Turn: {{ current_player }}</h1>
+    <form action="reset" method="POST" id="reset-form">
+    Game Key: <input readonly disabled value="{{ game_key }}" />
     <button type="submit">Reset Game</button>
     {%if board['big_winner'] %}
     <h2>Winner: {{ board['big_winner'] }}</h2>
@@ -89,7 +88,7 @@
               <td class="small-td">
                 {%if val['player'] %}
                 {{ val['player'] }}
-                {%elif val['move_is_legal'] %}
+                {%elif this_player == current_player and val['move_is_legal'] %}
                 {{ move_form(big_row_loop.index0, big_col_loop.index0, small_row_loop.index0, small_col_loop.index0) }}
                 {%endif%}
               </td>
@@ -103,5 +102,22 @@
       </tr>      
     {%endfor%}
     </table>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('reset-form').addEventListener("submit", function(e) {
+            if(!confirm("Reset game?")){
+                e.preventDefault();
+            }
+        });
+
+        var socket = io();
+
+        socket.on('message', function(data){
+            if(data === "refresh"){
+                location.reload()
+            }
+        });
+    </script>
   </body>
 </html>
