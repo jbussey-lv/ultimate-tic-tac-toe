@@ -59,7 +59,13 @@
     <h1>You: {{ this_player }} - Turn: {{ current_player }}</h1>
     <form action="reset" method="POST" id="reset-form">
     Game Key: <input readonly disabled value="{{ game_key }}" />
-    <button type="submit">Reset Game</button>
+    <button type="submit">
+        {%if this_player == 'X' %}
+        Flounce
+        {%else %}
+        Rage Quit
+        {%endif %}
+    </button>
     {%if board['big_winner'] %}
     <h2>Winner: {{ board['big_winner'] }}</h2>
     {%endif %}
