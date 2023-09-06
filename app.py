@@ -52,7 +52,7 @@ def create_new_game():
 @app.route('/games/<string:game_key>/<string:this_player>')
 def get_game(game_key, this_player):
     if(game_key not in games):
-        return redirect('/home')
+        return redirect('/')
     
     game = games[game_key]
     board = game.get_big_detailed_board()
@@ -69,7 +69,7 @@ def join_game():
 @app.route('/games/<string:game_key>/reset', methods=['POST'])
 def reset_game(game_key):
     if(game_key not in games):
-        return redirect('/home')
+        return redirect('/')
     
     game = games[game_key]
     game.reset()
@@ -82,7 +82,7 @@ def reset_game(game_key):
 def moves(game_key):
 
     if(game_key not in games):
-        return redirect('/home')
+        return redirect('/')
     
     game = games[game_key]
     big_row_index = int(request.form.get('big_row_index'))
