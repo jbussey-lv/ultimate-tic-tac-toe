@@ -31,8 +31,8 @@ def home():
 
 @app.route('/games', methods=['POST'])
 def create_new_game():
-    key = GameManager.create_game()
-    player = Game.players[0]
+    key, game = GameManager.create_game()
+    player = game.players[0]
     game_link = get_game_link(key, player)
     return redirect(game_link)
 
@@ -41,7 +41,7 @@ def get_game(game_key, this_player):
     try:
         game = GameManager.retrieve_game(game_key)
     except:
-        redirect ('/')
+        return redirect ('/')
 
     board = game.get_big_detailed_board()
     current_player = game.get_current_player()

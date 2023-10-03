@@ -1,12 +1,14 @@
 import copy
-
+import json
 
 class Game:
-  width = 3
-  players = ('X', 'O')
+  default_width = 3
+  default_players = ('X', 'O')
 
-  def __init__(self):
-    self.moves = []
+  def __init__(self, width=None, players=None, moves=None):
+    self.width = Game.default_width if width is None else width
+    self.players = Game.default_players if players is None else players
+    self.moves = [] if moves is None else moves
 
   def reset(self):
     self.moves = []
