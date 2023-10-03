@@ -10,7 +10,7 @@ class GameManager:
     game = Game()
     key = GameManager.get_new_game_key()
     GameManager.games[key] = game
-    return key, game
+    return key
 
   @staticmethod
   def get_new_game_key():
