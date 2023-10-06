@@ -49,9 +49,10 @@ def get_game(game_key, this_player):
 
 @app.route('/games', methods=['GET'])
 def join_game():
-    game_key = request.args.get('game_key')
-    player = Game.players[1]
-    game_link = get_game_link(game_key, player)
+    key = request.args.get('game_key')
+    game = GameManager.retrieve_game(key)
+    player = game.players[1]
+    game_link = get_game_link(key, player)
     return redirect(game_link)
 
 @app.route('/games/<string:game_key>/reset', methods=['POST'])
