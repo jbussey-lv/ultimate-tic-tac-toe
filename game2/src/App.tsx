@@ -22,7 +22,9 @@ function getConnectionEffect(setIsConnected: any, socket: any){
   }
 }
 
-function App({ gameKey, thisPlayer, socket }: any) {
+function App({ gameKey, thisPlayer, getSocket }: any) {
+
+  let socket = getSocket(gameKey)
 
   const [isConnected, setIsConnected] = useState(socket.connected);
 

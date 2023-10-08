@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
-import { socket } from './socket.tsx'
+import { getSocket } from './socket.tsx'
 
 function trim(str: string, ch: string) {
   var start = 0, 
@@ -24,6 +24,6 @@ let thisPlayer = pathParts[1];
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App gameKey={ gameKey } thisPlayer={ thisPlayer } socket={ socket }/>
+    <App gameKey={ gameKey } thisPlayer={ thisPlayer } getSocket={ getSocket }/>
   </React.StrictMode>,
 )
