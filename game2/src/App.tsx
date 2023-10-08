@@ -79,16 +79,17 @@ function Loading(){
 function Game({gameKey, thisPlayer, currentPlayer, board, bigWinner}: any){
   return (
     <>
-      <Turn thisPlayer={thisPlayer} currentPlayer={currentPlayer} />
+      <Turn thisPlayer={thisPlayer} currentPlayer={currentPlayer} bigWinner={ bigWinner } />
       <GameKey gameKey={ gameKey} bigWinner={ bigWinner } />
       <Board board={ board } bigWinner={ bigWinner }/>
     </>
   )
 }
 
-function Turn({ thisPlayer, currentPlayer }: any){
+function Turn({ thisPlayer, currentPlayer, bigWinner }: any){
+  let part2 = bigWinner ? `Winner: ${bigWinner}` : `Turn: ${currentPlayer}`
   return (
-    <h1>You: { thisPlayer } - Turn: { currentPlayer }</h1>
+    <h1>You: { thisPlayer } - { part2 }</h1>
   )
 }
 
