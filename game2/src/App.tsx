@@ -1,7 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 
-
-const MakeMoveContext = createContext((coords: Array<number>) => null);
+const GameContext = createContext({});
 
 function getConnectionEffect(setIsConnected: any, socket: any){
   return () => {
@@ -35,17 +34,17 @@ function App({ gameKey, thisPlayer, socket }: any) {
   });
 
   let makeMove = (coords: Array<number>) => {
-    console.log(coords)
     socket.emit("make-move", {gameKey, coords})
     return null;
   }
 
+  let gameContextValue = {makeMove, thisPlayer, currentPlayer: gameData.current_player};
 
   let gameInContext = (
-    <MakeMoveContext.Provider value={makeMove}>
+    <GameContext.Provider value={gameContextValue}>
       <Game gameKey={gameKey} thisPlayer={thisPlayer} currentPlayer={gameData.current_player}
             board={gameData.board} bigWinner={gameData.big_winner} />
-    </MakeMoveContext.Provider>
+    </GameContext.Provider>
   )
 
   return isConnected ?
@@ -143,18 +142,18 @@ function SmallSquare({player, coords, move_is_legal}: any){
 
 
 function MoveButton({moveIsLegal, coords}: any){
-  let disabled = !moveIsLegal;
 
-  const makeMove = useContext(MakeMoveContext);
+  const {makeMove, thisPlayer, currentPlayer}:any = useContext(GameContext);
 
-  let onClick = () => {
-    if(moveIsLegal){
-      makeMove(coords);
-    }
-  }
-  return (
-    <button disabled={disabled} onClick={onClick} className="go-button">Go</button>
-  )
+  if(!moveIsLegal){return <div></div>}
+
+  let onClick = () => {makeMove(coords);}
+
+  let enabled = thisPlayer == currentPlayer;
+
+  return enabled ?
+    (<button onClick={onClick} className="go-button">Go</button>) :
+    (<button disabled={true} className="go-button">Go</button>) ;
 }
 
 export default App

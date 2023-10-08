@@ -34,6 +34,7 @@ def handle_make_move(data):
     game_key = data['gameKey']
     game = GameManager.retrieve_game(game_key)
     game.add_move(coords)
+    GameManager.save_game(game_key, game)
     socketio.emit('game_data', game.get_full_data(), room=game_key)
 
 @app.route('/')
@@ -82,6 +83,7 @@ def reset_game(game_key):
 
     try:
         game = GameManager.retrieve_game(game_key)
+        game.reset()
     except:
         redirect ('/')
     
