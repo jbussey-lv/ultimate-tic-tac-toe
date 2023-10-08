@@ -23,7 +23,7 @@ def extract_game_key(referrer):
 
 @socketio.event
 def connect():
-    game_key = 'ANANM' # extract_game_key(request.referrer)
+    game_key = request.args['gameKey']
     join_room(game_key)
     game = GameManager.retrieve_game(game_key)
     socketio.emit('game_data', game.get_full_data(), room=game_key)

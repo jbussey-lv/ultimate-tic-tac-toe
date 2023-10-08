@@ -1,12 +1,13 @@
 import { io } from 'socket.io-client';
 
-let socket = {}
+let sockets = {}
 
 export const getSocket = function(gameKey){
-  if(socket[gameKey] === undefined){
-    socket[gameKey] = process.env.NODE_ENV === 'production' ?
-              io() :
-              io('http://localhost:5000')
+  let args = {query: {gameKey}}
+  if(sockets[gameKey] === undefined){
+    sockets[gameKey] = process.env.NODE_ENV === 'production' ?
+              io(args) :
+              io('http://localhost:5000', args)
   }
-  return socket[gameKey];
+  return sockets[gameKey];
 }
