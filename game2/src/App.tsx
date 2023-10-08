@@ -96,6 +96,8 @@ function SmallBoardWinner({ player }:any){
         { player }
       </div>
     )
+  } else {
+    return (<></>)
   }
 }
 
@@ -105,14 +107,28 @@ function SmallBoard({ smallRows }:any){
       <tbody>
         {smallRows.map((smallRow:any, smallRowIndex:number) => (
           <tr key={smallRowIndex} className="small-tr" >
-            {smallRow.map((smallCol:any, smallColIndex:number) => (
-              <td key={smallColIndex} className="small-td">a</td>
+            {smallRow.map((smallSquareData:any, smallColIndex:number) => (
+              <SmallSquare key={smallColIndex} {...smallSquareData} />
             ))}
           </tr>
         ))}
       </tbody>
     </table>
     
+  )
+}
+
+function SmallSquare({player, move_is_legal}: any){
+  let innerContent = player ? player : <MoveButton moveIsLegal={move_is_legal} />
+  return (
+    <td>{ innerContent }</td>
+  )
+}
+
+function MoveButton({moveIsLegal}: any){
+  let disabled = !moveIsLegal;
+  return (
+    <button disabled={disabled}>Go</button>
   )
 }
 
