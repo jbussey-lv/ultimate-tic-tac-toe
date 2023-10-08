@@ -66,12 +66,12 @@
         Rage Quit
         {%endif %}
     </button>
-    {%if board['big_winner'] %}
-    <h2>Winner: {{ board['big_winner'] }}</h2>
+    {%if big_winner %}
+    <h2>Winner: {{ big_winner }}</h2>
     {%endif %}
     </form>
     <table class="big-table">
-      {%for big_row in board['board'] %}
+      {%for big_row in board %}
       {% set big_row_loop = loop %}
       <tr class="big-tr">
         {%for big_square in big_row %}
@@ -109,7 +109,11 @@
     {%endfor%}
     </table>
 
+    <div id="react-app"></div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script>
         document.getElementById('reset-form').addEventListener("submit", function(e) {
             if(!confirm("Reset game?")){
@@ -124,6 +128,10 @@
                 location.reload()
             }
         });
+
+        socket.on('game_data', function(data){
+          console.log(data)
+        })
     </script>
   </body>
 </html>

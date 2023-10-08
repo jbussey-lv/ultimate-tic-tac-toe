@@ -7,7 +7,7 @@ from simple_websocket.ws import Server as WS
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 def get_game_link(game_key, player):
     return "/games/" + game_key + "/" + player
@@ -22,8 +22,10 @@ def extract_game_key(referrer):
 
 @socketio.event
 def connect():
-    game_key = extract_game_key(request.referrer)
+    game_key = 'ANANM' # extract_game_key(request.referrer)
     join_room(game_key)
+    game = GameManager.retrieve_game(game_key)
+    socketio.emit('game_data', game.get_full_data(), room=game_key)
 
 @app.route('/')
 def home():
@@ -42,10 +44,21 @@ def get_game(game_key, this_player):
         game = GameManager.retrieve_game(game_key)
     except:
         return redirect ('/')
+    
+    full_data = game.get_full_data()
+    
+    return render_template('game.html', game_key=game_key, this_player=this_player, **full_data)
 
-    board = game.get_big_detailed_board()
-    current_player = game.get_current_player()
-    return render_template('game.html', game_key=game_key, board=board, this_player=this_player, current_player=current_player)
+
+@app.route('/api/games/<string:game_key>', methods=['GET'])
+def api_game_data(game_key):
+    try:
+        game = GameManager.retrieve_game(game_key)
+    except:
+        return {"error": f'no game found for key {game_key}'}
+    
+    return game.get_full_data()
+
 
 @app.route('/games', methods=['GET'])
 def join_game():
@@ -63,17 +76,14 @@ def reset_game(game_key):
     except:
         redirect ('/')
     
-    game.reset()
     GameManager.save_game(game_key, game)
 
-    socketio.emit('message', 'refresh', room=game_key)
+    socketio.emit('game_data', game.get_full_data(), room=game_key)
 
     return redirect(request.referrer)
 
 @app.route('/games/<string:game_key>/moves', methods=['POST'])
 def moves(game_key):
-
-
     try:
         game = GameManager.retrieve_game(game_key)
     except:

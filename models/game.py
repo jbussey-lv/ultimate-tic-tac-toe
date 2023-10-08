@@ -18,6 +18,17 @@ class Game:
 
   def get_whose_move(self, move_num):
     return self.players[(move_num) % len(self.players)]
+  
+  def get_full_data(self):
+
+    big_detailed_board = self.get_big_detailed_board()
+    big_winner = self.get_big_winner(big_detailed_board)
+
+    return {
+      "board": big_detailed_board,
+      "current_player": self.get_current_player(),
+      "big_winner": big_winner
+    }
 
   def get_current_player(self):
     current_move = len(self.moves)
@@ -139,10 +150,7 @@ class Game:
               small_square = small_board[k][l]
               small_square["move_is_legal"] = False
 
-    return {
-      "big_winner": big_winner,
-      "board": big_detailed_board
-    }
+    return big_detailed_board
 
   def get_board_winner(self, board):
     all_sequences = self.get_all_sequences(board)
