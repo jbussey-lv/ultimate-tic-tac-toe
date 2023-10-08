@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
+
+
+const MakeMoveContext = createContext((coords: Array<number>) => null);
 
 function getConnectionEffect(setIsConnected: any, socket: any){
   return () => {
@@ -29,11 +32,25 @@ function App({ gameKey, thisPlayer, socket }: any) {
 
   socket.on('game_data', (newGameData:any)=>{
     setGameData(newGameData);
-  })
+  });
+
+  let makeMove = (coords: Array<number>) => {
+    console.log(coords)
+    socket.emit("make-move", {gameKey, coords})
+    return null;
+  }
+
+
+  let gameInContext = (
+    <MakeMoveContext.Provider value={makeMove}>
+      <Game gameKey={gameKey} thisPlayer={thisPlayer} currentPlayer={gameData.current_player}
+            board={gameData.board} bigWinner={gameData.big_winner} />
+    </MakeMoveContext.Provider>
+  )
 
   return isConnected ?
-         Game(gameKey, thisPlayer, gameData.current_player, gameData.board, gameData.big_winner) :
-         Loading();
+         gameInContext :
+         <Loading />;
 }
 
 function Loading(){
@@ -42,7 +59,7 @@ function Loading(){
   )
 }
 
-function Game(gameKey, thisPlayer, currentPlayer, board, bigWinner){
+function Game({gameKey, thisPlayer, currentPlayer, board, bigWinner}: any){
   return (
     <>
       <Turn thisPlayer={thisPlayer} currentPlayer={currentPlayer} />
@@ -70,7 +87,6 @@ function GameKey({ gameKey }: any){
 }
 
 function Board({ board }: any){
-  console.log(board)
   return (
     <table className="big-table">
       <tbody>
@@ -79,7 +95,7 @@ function Board({ board }: any){
             {bigRow.map((bigCol:any, bigColIndex:number) => (
               <td key={bigColIndex} className="big-td">
                 <SmallBoardWinner player={bigCol.winner} />
-                <SmallBoard smallRows={ bigCol.small_board } />
+                <SmallBoard smallRows={bigCol.small_board} bigRowIndex={bigRowIndex} bigColIndex={bigColIndex} />
               </td>
             ))}
           </tr>
@@ -101,14 +117,14 @@ function SmallBoardWinner({ player }:any){
   }
 }
 
-function SmallBoard({ smallRows }:any){
+function SmallBoard({ smallRows, bigRowIndex, bigColIndex }:any){
   return (
     <table className="small-table">
       <tbody>
         {smallRows.map((smallRow:any, smallRowIndex:number) => (
           <tr key={smallRowIndex} className="small-tr" >
             {smallRow.map((smallSquareData:any, smallColIndex:number) => (
-              <SmallSquare key={smallColIndex} {...smallSquareData} />
+              <SmallSquare key={smallColIndex} coords={[bigRowIndex,bigColIndex,smallRowIndex,smallColIndex]} {...smallSquareData} />
             ))}
           </tr>
         ))}
@@ -118,17 +134,26 @@ function SmallBoard({ smallRows }:any){
   )
 }
 
-function SmallSquare({player, move_is_legal}: any){
-  let innerContent = player ? player : <MoveButton moveIsLegal={move_is_legal} />
+function SmallSquare({player, coords, move_is_legal}: any){
+  let innerContent = player ? player : <MoveButton moveIsLegal={move_is_legal} coords={coords} />
   return (
     <td>{ innerContent }</td>
   )
 }
 
-function MoveButton({moveIsLegal}: any){
+
+function MoveButton({moveIsLegal, coords}: any){
   let disabled = !moveIsLegal;
+
+  const makeMove = useContext(MakeMoveContext);
+
+  let onClick = () => {
+    if(moveIsLegal){
+      makeMove(coords);
+    }
+  }
   return (
-    <button disabled={disabled}>Go</button>
+    <button disabled={disabled} onClick={onClick} className="go-button">Go</button>
   )
 }
 

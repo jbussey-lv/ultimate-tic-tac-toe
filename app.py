@@ -3,6 +3,7 @@ from models.game import Game
 from models.game_manager import GameManager 
 from flask_socketio import SocketIO, emit, send, join_room
 from simple_websocket.ws import Server as WS
+import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -25,6 +26,14 @@ def connect():
     game_key = 'ANANM' # extract_game_key(request.referrer)
     join_room(game_key)
     game = GameManager.retrieve_game(game_key)
+    socketio.emit('game_data', game.get_full_data(), room=game_key)
+
+@socketio.on('make-move')
+def handle_make_move(data):
+    coords = tuple(data['coords'])
+    game_key = data['gameKey']
+    game = GameManager.retrieve_game(game_key)
+    game.add_move(coords)
     socketio.emit('game_data', game.get_full_data(), room=game_key)
 
 @app.route('/')

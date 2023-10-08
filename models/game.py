@@ -13,8 +13,8 @@ class Game:
   def reset(self):
     self.moves = []
 
-  def add_move(self, big_row, big_col, small_row, small_col):
-    self.moves.append((big_row, big_col, small_row, small_col))
+  def add_move(self, move_coords):
+    self.moves.append(move_coords)
 
   def get_whose_move(self, move_num):
     return self.players[(move_num) % len(self.players)]
