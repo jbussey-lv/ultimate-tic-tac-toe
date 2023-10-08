@@ -13,8 +13,9 @@ class Game:
   def reset(self):
     self.moves = []
 
-  def add_move(self, move_coords):
-    self.moves.append(move_coords)
+  def add_move(self, move):
+    if list(move) not in self.moves:
+      self.moves.append(move)
 
   def get_whose_move(self, move_num):
     return self.players[(move_num) % len(self.players)]

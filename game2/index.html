@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/grid.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>Ultimate Tic Tac Toe</title>
     <style>
       *{
         box-sizing: border-box;
@@ -31,6 +31,23 @@
         font-size: 170px;
         
         text-align: center;
+      }
+
+      #big-board-wrapper {
+        position: relative;
+      }
+
+      div.big-board-winner {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 550px;
+        height: 550px;
+        font-size: 692px;
+        text-align: center;
+        color: #7e7e7ed6;
+        font-weight: bold;
+        line-height: 0.8;
       }
 
       table.small-table td {

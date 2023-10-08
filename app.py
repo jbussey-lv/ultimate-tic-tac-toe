@@ -37,6 +37,14 @@ def handle_make_move(data):
     GameManager.save_game(game_key, game)
     socketio.emit('game_data', game.get_full_data(), room=game_key)
 
+@socketio.on('reset')
+def handle_reset(data):
+    game_key = data['gameKey']
+    game = GameManager.retrieve_game(game_key)
+    game.reset()
+    GameManager.save_game(game_key, game)
+    socketio.emit('game_data', game.get_full_data(), room=game_key)
+
 @app.route('/')
 def home():
     return render_template('home.html')

@@ -25,12 +25,17 @@ function getConnectionEffect(setIsConnected: any, socket: any){
 function App({ gameKey, thisPlayer, socket }: any) {
 
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [gameData, setGameData] = useState<any>({})
+
+  const [currentPlayer, setCurrentPlayer] = useState('')
+  const [board, setBoard] = useState([])
+  const [bigWinner, setBigWinner] = useState('')
 
   useEffect(getConnectionEffect(setIsConnected, socket), []);
 
-  socket.on('game_data', (newGameData:any)=>{
-    setGameData(newGameData);
+  socket.on('game_data', (newGameData:any) => {
+    setCurrentPlayer(newGameData.current_player);
+    setBoard(newGameData.board)
+    setBigWinner(newGameData.big_winner);
   });
 
   let makeMove = (coords: Array<number>) => {
@@ -38,12 +43,25 @@ function App({ gameKey, thisPlayer, socket }: any) {
     return null;
   }
 
-  let gameContextValue = {makeMove, thisPlayer, currentPlayer: gameData.current_player};
+  let reset = () => {
+    let message = "Reset game?";
+    if(confirm(message)){
+      socket.emit("reset", {gameKey})
+    }
+    return null;
+  }
+
+  let gameContextValue = {
+    makeMove,
+    reset,
+    thisPlayer,
+    currentPlayer
+  };
 
   let gameInContext = (
     <GameContext.Provider value={gameContextValue}>
-      <Game gameKey={gameKey} thisPlayer={thisPlayer} currentPlayer={gameData.current_player}
-            board={gameData.board} bigWinner={gameData.big_winner} />
+      <Game gameKey={gameKey} thisPlayer={thisPlayer} currentPlayer={currentPlayer}
+            board={board} bigWinner={bigWinner} />
     </GameContext.Provider>
   )
 
@@ -62,8 +80,8 @@ function Game({gameKey, thisPlayer, currentPlayer, board, bigWinner}: any){
   return (
     <>
       <Turn thisPlayer={thisPlayer} currentPlayer={currentPlayer} />
-      <GameKey gameKey={ gameKey} />
-      <Board board={ board } />
+      <GameKey gameKey={ gameKey} bigWinner={ bigWinner } />
+      <Board board={ board } bigWinner={ bigWinner }/>
     </>
   )
 }
@@ -74,46 +92,60 @@ function Turn({ thisPlayer, currentPlayer }: any){
   )
 }
 
-function GameKey({ gameKey }: any){
+function GameKey({ gameKey, bigWinner }: any){
+
+  const {reset}:any = useContext(GameContext);
+
+  let buttonText = bigWinner ? "Reset" : "Rage Quit"
+
   return (
-    <form action="reset" method="POST" id="reset-form">
+    <div>
       Game Key: <input readOnly disabled value={ gameKey } />
-      <button type="submit">
-          Rage Quit
+      <button type="button" onClick={reset}>
+        { buttonText }
       </button>
-    </form>
+    </div>
   )
 }
 
-function Board({ board }: any){
+function Board({ board, bigWinner }: any){
   return (
-    <table className="big-table">
-      <tbody>
-        {board.map((bigRow:any, bigRowIndex:number) => (
-          <tr key={bigRowIndex} className="big-tr">
-            {bigRow.map((bigCol:any, bigColIndex:number) => (
-              <td key={bigColIndex} className="big-td">
-                <SmallBoardWinner player={bigCol.winner} />
-                <SmallBoard smallRows={bigCol.small_board} bigRowIndex={bigRowIndex} bigColIndex={bigColIndex} />
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div id="big-board-wrapper">
+      <table className="big-table">
+        <tbody>
+          {board.map((bigRow:any, bigRowIndex:number) => (
+            <tr key={bigRowIndex} className="big-tr">
+              {bigRow.map((bigCol:any, bigColIndex:number) => (
+                <td key={bigColIndex} className="big-td">
+                  <SmallBoardWinner player={bigCol.winner} />
+                  <SmallBoard smallRows={bigCol.small_board} bigRowIndex={bigRowIndex} bigColIndex={bigColIndex} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <BigBoardWinner player={bigWinner} />
+    </div>
   )
 }
 
 function SmallBoardWinner({ player }:any){
-  if(player){
-    return (
-      <div className="small-board-winner">
-        { player }
-      </div>
-    )
-  } else {
-    return (<></>)
-  }
+  if(!player){return;}
+  return (
+    <div className="small-board-winner">
+      { player }
+    </div>
+  )
+}
+
+function BigBoardWinner({ player }:any){
+  if(!player){return;}
+  return (
+    <div className="big-board-winner">
+      { player }
+    </div>
+  )
 }
 
 function SmallBoard({ smallRows, bigRowIndex, bigColIndex }:any){
