@@ -2,8 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import { socket } from './socket.tsx'
-import './index.css'
-
 
 let gameKey = "ANANM";
 let thisPlayer = "X";

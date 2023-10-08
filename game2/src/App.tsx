@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import './App.css'
 
 function getConnectionEffect(setIsConnected: any, socket: any){
   return () => {
@@ -28,8 +27,8 @@ function App({ gameKey, thisPlayer, socket }: any) {
 
   useEffect(getConnectionEffect(setIsConnected, socket), []);
 
-  socket.on('game_data', (gameData:any)=>{
-    setGameData(gameData);
+  socket.on('game_data', (newGameData:any)=>{
+    setGameData(newGameData);
   })
 
   return isConnected ?
@@ -48,7 +47,7 @@ function Game(gameKey, thisPlayer, currentPlayer, board, bigWinner){
     <>
       <Turn thisPlayer={thisPlayer} currentPlayer={currentPlayer} />
       <GameKey gameKey={ gameKey} />
-      <Board boardData={ board } />
+      <Board board={ board } />
     </>
   )
 }
@@ -70,9 +69,50 @@ function GameKey({ gameKey }: any){
   )
 }
 
-function Board({ boardData }: any){
+function Board({ board }: any){
+  console.log(board)
   return (
-    <div>board data</div>
+    <table className="big-table">
+      <tbody>
+        {board.map((bigRow:any, bigRowIndex:number) => (
+          <tr key={bigRowIndex} className="big-tr">
+            {bigRow.map((bigCol:any, bigColIndex:number) => (
+              <td key={bigColIndex} className="big-td">
+                <SmallBoardWinner player={bigCol.winner} />
+                <SmallBoard smallRows={ bigCol.small_board } />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+function SmallBoardWinner({ player }:any){
+  if(player){
+    return (
+      <div className="small-board-winner">
+        { player }
+      </div>
+    )
+  }
+}
+
+function SmallBoard({ smallRows }:any){
+  return (
+    <table className="small-table">
+      <tbody>
+        {smallRows.map((smallRow:any, smallRowIndex:number) => (
+          <tr key={smallRowIndex} className="small-tr" >
+            {smallRow.map((smallCol:any, smallColIndex:number) => (
+              <td key={smallColIndex} className="small-td">a</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    
   )
 }
 

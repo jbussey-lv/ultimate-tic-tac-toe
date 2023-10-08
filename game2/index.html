@@ -5,6 +5,49 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
+    <style>
+      *{
+        box-sizing: border-box;
+      }
+
+      table.big-table, table.small-table {
+        border-style: hidden;
+        border-collapse: collapse;
+      }
+
+      table.big-table td {
+        border: 2px solid;
+        /* width: 150px;
+        height: 150px; */
+        padding: 15px;
+        position: relative;
+      }
+
+      div.small-board-winner {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        font-size: 170px;
+        
+        text-align: center;
+      }
+
+      table.small-table td {
+        border: 1px solid grey;
+        width: 50px;
+        height: 50px;
+        padding: 5px;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      table.small-table td form {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+
+    </style>
   </head>
   <body>
     <div id="root"></div>
